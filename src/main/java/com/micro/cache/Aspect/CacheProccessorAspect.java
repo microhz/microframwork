@@ -27,7 +27,7 @@ public abstract class CacheProccessorAspect {
      * @return
      * @throws Throwable
      */
-    @Around("@annotation(com.micro.cache.annotation.EnableCache)")
+//    @Around("@annotation(com.micro.cache.annotation.EnableCache)")
     public Object processCache(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         Object val = null;
         try {
