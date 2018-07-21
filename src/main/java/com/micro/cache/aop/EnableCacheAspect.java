@@ -1,11 +1,10 @@
-package com.micro.cache.Aspect;
+package com.micro.cache.aop;
 
+import com.alibaba.fastjson.JSONObject;
 import com.micro.cache.annotation.EnableCache;
 import com.micro.cache.loader.CacheLoader;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 
 import java.lang.reflect.Method;
@@ -17,9 +16,9 @@ import java.util.logging.Logger;
  * Created by peichuan.mpc on 20/07/2018.
  * 缓存切面类
  */
-public abstract class CacheProccessorAspect {
+public abstract class EnableCacheAspect {
 
-    Logger logger = Logger.getLogger("CacheProccessorAspect");
+    Logger logger = Logger.getLogger("EnableCacheAspect");
 
     /**
      * 定义切面为处理com.micro.cache.annotation.EnableCache注解
@@ -27,7 +26,7 @@ public abstract class CacheProccessorAspect {
      * @return
      * @throws Throwable
      */
-//    @Around("@annotation(com.micro.cache.annotation.EnableCache)")
+    @Around("@annotation(com.micro.cache.annotation.EnableCache)")
     public Object processCache(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         Object val = null;
         try {
@@ -47,16 +46,18 @@ public abstract class CacheProccessorAspect {
 
             formatLog("method -> %s get from cache", cacheKey);
 
-            val = cacheLoader.get(cacheKey);
-            if (val == null) {
+            String cacheVal = cacheLoader.get(cacheKey);
+            if (cacheVal == null) {
                 formatLog("method -> %s not exits in cache ,put key", cacheKey);
                 val = proceedingJoinPoint.proceed();
-                boolean cacheSuccess = cacheLoader.set(cacheKey, val, enableCache.cacheTimes(), enableCache.timeUnit());
+                boolean cacheSuccess = cacheLoader.set(cacheKey, JSONObject.toJSONString(val), enableCache.cacheTimes(), enableCache.timeUnit());
                 if (!cacheSuccess) {
                     cacheFail(cacheKey, val, enableCache.cacheTimes(), enableCache.timeUnit());
                 }
             } else {
-                formatLog("method -> %s  in cache val -> %s", cacheKey, val.toString());
+                Class returnType = methodSignature.getReturnType();
+                val = JSONObject.parseObject(cacheVal, returnType);
+                formatLog("method -> %s  in cache val -> %s", cacheKey, cacheKey);
             }
         } catch (Throwable throwable) {
             processThrowable(throwable);

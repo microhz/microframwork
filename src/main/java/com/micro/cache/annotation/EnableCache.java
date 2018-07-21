@@ -7,7 +7,8 @@ import java.lang.annotation.Target;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 支持注解
+ * 支持缓存注解
+ * @author micro
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

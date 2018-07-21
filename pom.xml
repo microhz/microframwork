@@ -34,6 +34,13 @@
                 <version>1.9.1</version>
             </dependency>
 
+            <!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>1.2.47</version>
+            </dependency>
+
         </dependencies>
     <contributors><contributor><properties><provider>peichuan.mpc@alibaba-inc.com</provider><codeName>null</codeName><codeUrl>http://gitlab.alibaba-inc.com/wdk-wms/wmsoutput.git commit:81d3ac7ae5</codeUrl><description>contributors added by SCM Plugin, please don't modify it!</description></properties></contributor></contributors>
 </project>
