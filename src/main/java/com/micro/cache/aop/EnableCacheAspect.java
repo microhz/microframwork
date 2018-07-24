@@ -46,17 +46,15 @@ public abstract class EnableCacheAspect {
 
             formatLog("method -> %s get from cache", cacheKey);
 
-            String cacheVal = cacheLoader.get(cacheKey);
-            if (cacheVal == null) {
+            val = cacheLoader.get(cacheKey);
+            if (val == null) {
                 formatLog("method -> %s not exits in cache ,put key", cacheKey);
                 val = proceedingJoinPoint.proceed();
-                boolean cacheSuccess = cacheLoader.set(cacheKey, JSONObject.toJSONString(val), enableCache.cacheTimes(), enableCache.timeUnit());
+                boolean cacheSuccess = cacheLoader.set(cacheKey, val, enableCache.cacheTimes(), enableCache.timeUnit());
                 if (!cacheSuccess) {
                     cacheFail(cacheKey, val, enableCache.cacheTimes(), enableCache.timeUnit());
                 }
             } else {
-                Class returnType = methodSignature.getReturnType();
-                val = JSONObject.parseObject(cacheVal, returnType);
                 formatLog("method -> %s  in cache val -> %s", cacheKey, cacheKey);
             }
         } catch (Throwable throwable) {
@@ -77,17 +75,14 @@ public abstract class EnableCacheAspect {
         // sub class process
     }
 
+    // 此处映射切点的信息与key的关系，protected可以让子类去override
     protected String getCacheKey(ProceedingJoinPoint proceedingJoinPoint) {
         MethodSignature signature = (MethodSignature) proceedingJoinPoint.getSignature();
         Method method = signature.getMethod();
         String beanName = proceedingJoinPoint.getTarget().getClass().getSimpleName();
         StringBuilder key = new StringBuilder();
-
-        boolean isCacheKeyExits = false;
-        if (!isCacheKeyExits) {
-            for(Object param : proceedingJoinPoint.getArgs()) {
-                key.append(param).append(getKeySplitor());
-            }
+        for(Object param : proceedingJoinPoint.getArgs()) {
+            key.append(param).append(getKeySplitor());
         }
         return beanName + "." + method.getName() + key.subSequence(0, key.length() - 1).toString();
     }
@@ -96,7 +91,7 @@ public abstract class EnableCacheAspect {
         return "#";
     }
 
-
+    // 具体使用的缓存中间件不定义
     protected abstract CacheLoader getCacheLoader();
 
     protected void formatLog(String content, String... params) {

@@ -12,7 +12,7 @@ public interface CacheLoader {
      * @param key
      * @return
      */
-    String get(String key);
+    Object get(String key);
 
     /**
      * 设置缓存与超时时间
