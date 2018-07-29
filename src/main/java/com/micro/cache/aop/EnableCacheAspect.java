@@ -20,6 +20,8 @@ public abstract class EnableCacheAspect {
 
     Logger logger = Logger.getLogger("EnableCacheAspect");
 
+    protected CacheLoader cacheLoader;
+
     /**
      * 定义切面为处理com.micro.cache.annotation.EnableCache注解
      * @param proceedingJoinPoint
@@ -84,7 +86,7 @@ public abstract class EnableCacheAspect {
         for(Object param : proceedingJoinPoint.getArgs()) {
             key.append(param).append(getKeySplitor());
         }
-        return beanName + "." + method.getName() + key.subSequence(0, key.length() - 1).toString();
+        return beanName + "." + method.getName() + getKeySplitor() + key.subSequence(0, key.length() - 1).toString();
     }
 
     protected String getKeySplitor() {
